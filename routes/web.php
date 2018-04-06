@@ -11,6 +11,23 @@
 |
 */
 
+// ADMIN
+Route::get('/admin/logout',['uses'=>'Admin\AuthController@logout','as'=>'admin.auth.logout']);
+Route::get('/admin/login', ['uses'=>'Admin\AuthController@showLoginForm','as'=>'admin.auth.login']);
+Route::post('/admin/login', 'Admin\AuthController@login');
+// all protected middleare routes goes here...
+Route::middleware('admin')->group( function () {
+	Route::get('/admin', 'AdminController@index')->name('admin');
+	Route::resource('/admin/category', 'CategoryController',['except'=>['show','index','destroy','edit']]);
+	Route::resource('/admin/tags', 'TagsController',['except'=>['show','index','destroy','edit']]);
+	Route::resource('/admin/post', 'PostsController');
+});
+
+//subscriptions mails newsletters
+Route::get('manageMailChimp', 'MailChimpController@manageMailChimp');
+Route::post('subscribe',['as'=>'subscribe','uses'=>'MailChimpController@subscribe']);
+Route::post('sendCompaign',['as'=>'sendCompaign','uses'=>'MailChimpController@sendCompaign']);
+
 Route::get('/', function () {
     return view('welcome');
 });
